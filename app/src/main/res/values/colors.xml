@@ -9,4 +9,5 @@
     <color name="pink">#FF52A2</color>
     <color name="image_border_color">#757575</color>
     <color name="item_happy_place_text_color">#606060</color>
+    <color name="detail_screen_description_text_color">#757575</color>
 </resources>
