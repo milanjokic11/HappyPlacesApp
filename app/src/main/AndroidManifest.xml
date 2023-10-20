@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-        android:name=".MainActivity"
+        android:name=".activities.MainActivity"
         android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
@@ -36,9 +36,15 @@
         </activity>
 
         <activity
-            android:name=".AddHappyPlaceActivity"
+            android:name=".activities.AddHappyPlaceActivity"
             android:screenOrientation="portrait"
             android:label="ADD HAPPY PLACE"
+            android:theme="@style/CustomNoActionBarTheme" />
+
+        <activity
+            android:name=".activities.HappyPlaceDetailActivity"
+            android:screenOrientation="portrait"
+            android:label="HAPPY PLACE DETAILS"
             android:theme="@style/CustomNoActionBarTheme" />
 
     </application>
