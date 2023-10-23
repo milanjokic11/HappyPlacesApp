@@ -15,6 +15,7 @@ import eu.tutorials.happyplacesapp.R
 import eu.tutorials.happyplacesapp.adapters.HappyPlacesAdapter
 import eu.tutorials.happyplacesapp.database.DatabaseHandler
 import eu.tutorials.happyplacesapp.models.HappyPlaceModel
+import eu.tutorials.happyplacesapp.utils.SwipeToDeleteCallback
 import eu.tutorials.happyplacesapp.utils.SwipeToEditCallback
 
 class MainActivity : AppCompatActivity() {
@@ -50,15 +51,26 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        // set up swipe right to edit happy place
         val editSwipeHandler = object: SwipeToEditCallback(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val adapter = rvHappyPlacesList?.adapter as HappyPlacesAdapter
                 adapter.notifyEditItem(this@MainActivity, viewHolder.adapterPosition, ADD_PLACE_REQUEST_CODE)
             }
         }
-
         val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
         editItemTouchHelper.attachToRecyclerView(rvHappyPlacesList)
+
+        // set up swipe left to delete happy place
+        val deleteSwipeHandler = object: SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = rvHappyPlacesList?.adapter as HappyPlacesAdapter
+                adapter.removeAt(viewHolder.adapterPosition)
+                getHappyPlacesListFromDB()
+            }
+        }
+        val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
+        deleteItemTouchHelper.attachToRecyclerView(rvHappyPlacesList)
     }
 
     private fun getHappyPlacesListFromDB() {
@@ -74,10 +86,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @Deprecated("Deprecated in Java")
+    @Deprecated("Deprecated onActivityResult(requestCode, resultCode, data) in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == ADD_PLACE_REQUEST_CODE) {
+        if (requestCode == ADD_PLACE_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 getHappyPlacesListFromDB()
             } else {

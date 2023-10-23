@@ -4,4 +4,6 @@
     <string name="btn_text_save">SAVE</string>
     <string name="no_happy_places_found_yet">No Happy Places found yet, please add one...</string>
     <string name="image_content_description">image</string>
+    <string name="maps_api_key">AIzaSyDkw23_phmMUNFzfzxV5cS48BkogayfR60</string>
+    <string name="btn_text_view_on_map">VIEW ON MAP</string>
 </resources>

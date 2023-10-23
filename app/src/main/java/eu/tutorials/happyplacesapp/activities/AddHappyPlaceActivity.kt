@@ -22,6 +22,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -71,6 +75,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             onBackPressed()
         }
 
+        if (!Places.isInitialized()) {
+            Places.initialize(this@AddHappyPlaceActivity, resources.getString(R.string.maps_api_key))
+        }
+
         if (intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)) {
             mHappyPlaceDetails = intent.getSerializableExtra(MainActivity.EXTRA_PLACE_DETAILS) as HappyPlaceModel
         }
@@ -91,6 +99,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         etTitle = findViewById<EditText>(R.id.et_title)
         etDescription = findViewById<EditText>(R.id.et_description)
         etLocation = findViewById<EditText>(R.id.et_location)
+        etLocation?.setOnClickListener(this)
         btnSave = findViewById<Button>(R.id.btn_save)
         btnSave?.setOnClickListener(this)
         if (mHappyPlaceDetails != null) {
@@ -169,11 +178,20 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                 }
-
+            }
+            R.id.et_location -> {
+                try {
+                     val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS)
+                    val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields).build(this@AddHappyPlaceActivity)
+                    startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
     }
 
+    @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -193,6 +211,11 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
                 saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
                 ivPlaceImage?.setImageBitmap(thumbnail)
+            } else if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+                val place: Place = Autocomplete.getPlaceFromIntent(data!!)
+                etLocation?.setText(place.address)
+                mLatitude = place.latLng!!.latitude
+                mLongitude = place.latLng!!.longitude
             }
         }
     }
@@ -280,5 +303,6 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         private const val GALLERY = 1
         private const val CAMERA = 2
         private const val IMAGE_DIRECTORY = "HappyPlacesImages"
+        private const val AUTOCOMPLETE_REQUEST_CODE = 3
     }
 }
