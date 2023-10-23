@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -14,6 +15,7 @@ import eu.tutorials.happyplacesapp.R
 import eu.tutorials.happyplacesapp.adapters.HappyPlacesAdapter
 import eu.tutorials.happyplacesapp.database.DatabaseHandler
 import eu.tutorials.happyplacesapp.models.HappyPlaceModel
+import eu.tutorials.happyplacesapp.utils.SwipeToEditCallback
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,11 +45,20 @@ class MainActivity : AppCompatActivity() {
         placesAdapter.setOnClickListener(object: HappyPlacesAdapter.OnClickListener{
             override fun onClick(pos: Int, model: HappyPlaceModel) {
                 val intent = Intent(this@MainActivity, HappyPlaceDetailActivity::class.java)
+                intent.putExtra(EXTRA_PLACE_DETAILS, model)
                 startActivity(intent)
             }
         })
 
+        val editSwipeHandler = object: SwipeToEditCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = rvHappyPlacesList?.adapter as HappyPlacesAdapter
+                adapter.notifyEditItem(this@MainActivity, viewHolder.adapterPosition, ADD_PLACE_REQUEST_CODE)
+            }
+        }
 
+        val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
+        editItemTouchHelper.attachToRecyclerView(rvHappyPlacesList)
     }
 
     private fun getHappyPlacesListFromDB() {
@@ -63,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == ADD_PLACE_REQUEST_CODE) {
@@ -76,5 +88,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         var ADD_PLACE_REQUEST_CODE = 1
+        var EXTRA_PLACE_DETAILS = "extra_place_details"
     }
 }
