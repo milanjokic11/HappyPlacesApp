@@ -38,7 +38,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap?) {
         val pos = LatLng(mHappyPlaceDetails!!.latitude, mHappyPlaceDetails!!.longitude)
         map!!.addMarker(MarkerOptions().position(pos).title(mHappyPlaceDetails!!.location))
-        // code to zoom into location on google map
+        // code to zoom into location on google map (11f is referring to the zoom in range of map)
         val newLatLngZoom = CameraUpdateFactory.newLatLngZoom(pos, 11f)
         map.animateCamera(newLatLngZoom)
     }

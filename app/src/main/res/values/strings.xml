@@ -6,4 +6,5 @@
     <string name="image_content_description">image</string>
     <string name="maps_api_key">AIzaSyDkw23_phmMUNFzfzxV5cS48BkogayfR60</string>
     <string name="btn_text_view_on_map">VIEW ON MAP</string>
+    <string name="add_place_select_current_location_text">SELECT CURRENT LOCATION</string>
 </resources>
